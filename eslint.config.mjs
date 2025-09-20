@@ -1,4 +1,4 @@
-// файл eslint.config.js :
+// файл eslint.config.mjs :
 
 
 import js from "@eslint/js";
