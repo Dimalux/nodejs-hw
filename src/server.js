@@ -14,7 +14,7 @@ const app = express();
 
 
 // // Тепер змінні доступні через process.env
-// // Отримуємо порт з змінної оточення або використовуємо 3000 за замовчуванням
+// // Отримуємо порт з змінної оточення або використовуємо 3030 за замовчуванням
 const PORT = process.env.PORT || 3030;
 
 
@@ -39,21 +39,17 @@ app.use(pino({
 
 
 // Перший маршрут
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hello Dima!' });
-});
-
-
-// Routes
 app.get('/notes', (req, res) => {
     res.status(200).json({ message: 'Retrieved all notes' });
 });
 
+// Другий маршрут
 app.get('/notes/:noteId', (req, res) => {
     const { noteId } = req.params;
     res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
 });
 
+// Третій маршрут
 app.get('/test-error', () => {
     throw new Error('Simulated server error');
 });
