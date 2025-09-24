@@ -6,9 +6,16 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+// або другий більш сучасний і елегантний:
+// import 'dotenv/config';
+
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
+
+import { connectMongoDB } from './db/connectMongoDB.js';
+
+
 
 const app = express();
 
@@ -54,6 +61,12 @@ app.get('/test-error', () => {
     throw new Error('Simulated server error');
 });
 
+
+// підключення до MongoDB
+await connectMongoDB();
+
+
+
 // Middleware 404 (після всіх маршрутів)
 app.use((req, res) => {
     res.status(404).json({ message: 'Route not found' });
@@ -64,6 +77,8 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ message: err.message });
 });
+
+
 
 // Запуск сервера
 app.listen(PORT, () => {
