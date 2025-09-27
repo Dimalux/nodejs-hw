@@ -3,11 +3,48 @@
 import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 
-// Отримати список усіх нотаток
+// Отримати список усіх нотаток СТАРЕ
+// export const getAllNotes = async (req, res) => {
+//   const notes = await Note.find();
+//   res.status(200).json(notes);
+// };
+
+
+
+// Отримати список усіх нотаток з фільтрацією
 export const getAllNotes = async (req, res) => {
-  const notes = await Note.find();
-  res.status(200).json(notes);
+  const { tag, search } = req.query;
+
+  // Створюємо об'єкт для фільтрації
+  const filter = {};
+
+  // Додаємо фільтр за тегом, якщо він переданий
+  if (tag) {
+    filter.tag = tag;
+  }
+
+  // Додаємо фільтр за пошуком, якщо він переданий
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: 'i' } }, // пошук у title (case insensitive)
+      { content: { $regex: search, $options: 'i' } } // пошук у content (case insensitive)
+    ];
+  }
+
+  const notes = await Note.find(filter);
+
+  // Відповідь має бути у форматі { notes: [...] } згідно завдання
+  res.status(200).json({ notes });
 };
+
+
+
+
+
+
+
+
+
 
 // Отримати одну нотатку за id
 // Додаємо третій параметр next до контролера
