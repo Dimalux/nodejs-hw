@@ -87,8 +87,8 @@ app.use(cors());
 app.use(express.json());
 
 // підключаємо групу маршрутів
-app.use('/api', authRoutes); // Додаємо префікс /api для кращої структури
-app.use('/api', notesRoutes);
+app.use(authRoutes); 
+app.use(notesRoutes);
 
 // Middleware 404 (після всіх маршрутів)
 app.use(notFoundHandler);

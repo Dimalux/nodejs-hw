@@ -15,12 +15,12 @@ import {
 const router = Router();
 
 // POST /auth/register - реєстрація нового користувача
-router.post('/register', celebrate(registerUserSchema), registerUser);
+router.post('/auth/register', celebrate(registerUserSchema), registerUser);
 
 // POST /auth/login - вхід користувача
-router.post('/login', celebrate(loginUserSchema), loginUser);
+router.post('/auth/login', celebrate(loginUserSchema), loginUser);
 
 // GET /auth/current - отримання поточного користувача
-router.get('/current', getCurrentUser);
+router.get('/auth/current', getCurrentUser);
 
 export default router;

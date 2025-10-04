@@ -26,7 +26,7 @@ const userSchema = new Schema(
   },
 );
 
-// Хук для встановлення username як email за замовчуванням
+// Хук для встановлення username як email за замовчуванням перед збереженням документа
 userSchema.pre('save', function (next) {
   if (!this.username) {
     this.username = this.email;
