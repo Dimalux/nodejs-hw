@@ -31,6 +31,11 @@ app.use(logger);
 // Дозволяє запити з будь-яких джерел
 app.use(cors());
 app.use(express.json());
+// Налаштовуємо парсер кук
+// Встановлюємо пакет і підключаємо його як middleware:
+app.use(cookieParser());
+
+
 
 // підключаємо групу маршрутів
 app.use(authRoutes);
@@ -45,6 +50,7 @@ app.use(errors());
 // Error — якщо під час запиту виникла помилка
 app.use(errorHandler);
 
+
 // підключення до MongoDB
 await connectMongoDB();
 
@@ -54,9 +60,3 @@ app.listen(PORT, () => {
 });
 
 
-
-// Налаштовуємо парсер кук
-// Встановлюємо пакет і підключаємо його як middleware:
-app.use(express.json());
-app.use(cors());
-app.use(cookieParser());
