@@ -6,6 +6,7 @@ import { celebrate } from 'celebrate';
 import {
   loginUser,
   logoutUser,
+  refreshUserSession,
   registerUser,
 } from '../controllers/authController.js';
 import {
@@ -29,9 +30,8 @@ router.post('/auth/login', celebrate(loginUserSchema), loginUser);
 // POST /auth/logout - вихід користувача з системи
 router.post('/auth/logout', logoutUser);
 
-// // GET /auth/current - отримання поточного користувача
-// router.get('/auth/current', getCurrentUser);
 
-
+ // POST /auth/refresh - cтворення нової сесії
+router.post('/auth/refresh', refreshUserSession);
 
 export default router;
