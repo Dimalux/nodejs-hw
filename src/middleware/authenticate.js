@@ -1,20 +1,31 @@
 // src/middleware/authenticate.js
 
-
 import createHttpError from 'http-errors';
 import { Session } from '../models/session.js';
 import { User } from '../models/user.js';
 
 export const authenticate = async (req, res, next) => {
+  let accessToken;
+
+  // Спершу перевіряємо заголовок Authorization (для Bearer token)
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    accessToken = authHeader.substring(7); // Видаляємо "Bearer " з початку
+  }
+  // Якщо немає в заголовку, перевіряємо cookies
+  else if (req.cookies.accessToken) {
+    accessToken = req.cookies.accessToken;
+  }
+
   // 1. Перевіряємо наявність accessToken
-  if (!req.cookies.accessToken) {
+  if (!accessToken) {
     next(createHttpError(401, 'Missing access token'));
     return;
   }
 
   // 2. Якщо access токен існує, шукаємо сесію
   const session = await Session.findOne({
-    accessToken: req.cookies.accessToken,
+    accessToken: accessToken,
   });
 
   // 3. Якщо такої сесії нема, повертаємо помилку
@@ -46,6 +57,7 @@ export const authenticate = async (req, res, next) => {
   // 8. Передаємо управління далі
   next();
 };
+
 
 
 
