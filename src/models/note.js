@@ -18,6 +18,14 @@ const noteSchema = new Schema(
       enum: TAGS, // використовуємо константи з tags.js
       default: 'Todo',
     },
+
+    // Встановлюємо звязок між колекціями: кожен нотатка належить певному користувачу.
+userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
   },
   {
     timestamps: true,

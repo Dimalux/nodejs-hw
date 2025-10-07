@@ -3,12 +3,15 @@
 import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 
+
 // Отримати список усіх нотаток з фільтрацією та пагінацією
 export const getAllNotes = async (req, res) => {
   const { tag, search, page = 1, perPage = 10 } = req.query;
 
-  // Створюємо об'єкт для фільтрації
-  const filter = {};
+
+ // Створюємо об'єкт для фільтрації
+    const filter = { userId: req.user._id }; // Додаємо критерій пошуку тільки нотаток поточного користувача
+
 
   // Додаємо фільтр за тегом, якщо він переданий
   if (tag) {
@@ -49,13 +52,16 @@ export const getAllNotes = async (req, res) => {
   });
 };
 
-// Отримати одну нотатку за id
-// Додаємо третій параметр next до контролера
+ // Отримати одну нотатку за id
 export const getNoteById = async (req, res, next) => {
   const { noteId } = req.params;
-  const note = await Note.findById(noteId);
 
-  // У контролері використовуємо функцію createHttpError
+  // Шукаємо нотатку за id і перевіряємо, що вона належить поточному користувачу
+  const note = await Note.findOne({
+    _id: noteId,
+    userId: req.user._id
+  });
+
   if (!note) {
     next(createHttpError(404, 'Note not found'));
     return;
@@ -64,15 +70,23 @@ export const getNoteById = async (req, res, next) => {
   res.status(200).json(note);
 };
 
+
 export const createNote = async (req, res) => {
-  const note = await Note.create(req.body);
+  const note = await Note.create({
+    ...req.body,
+     // Додаємо властивість userId
+    userId: req.user._id});
   res.status(201).json(note);
 };
 
+
 export const deleteNote = async (req, res, next) => {
   const { noteId } = req.params;
+
+  // Видаляємо тільки нотатку, яка належить поточному користувачу
   const note = await Note.findOneAndDelete({
     _id: noteId,
+    userId: req.user._id
   });
 
   if (!note) {
@@ -80,16 +94,21 @@ export const deleteNote = async (req, res, next) => {
     return;
   }
 
-  res.status(200).send(note);
+  res.status(200).json(note);
 };
+
 
 export const updateNote = async (req, res, next) => {
   const { noteId } = req.params;
 
+  // Оновлюємо тільки нотатку, яка належить поточному користувачу
   const note = await Note.findOneAndUpdate(
-    { _id: noteId }, // Шукаємо по id
+    {
+      _id: noteId,
+      userId: req.user._id
+    }, // Критерій пошуку: id нотатки + userId власника
     req.body,
-    { new: true }, // повертаємо оновлений документ
+    { new: true } // повертаємо оновлений документ
   );
 
   if (!note) {
@@ -99,3 +118,9 @@ export const updateNote = async (req, res, next) => {
 
   res.status(200).json(note);
 };
+
+
+
+
+
+
