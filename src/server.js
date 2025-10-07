@@ -1,5 +1,6 @@
 // src/server.js
 
+
 // Обов'язково на початку файлу!
 // Підвантажує змінні з .env файлу
 import 'dotenv/config';
@@ -15,6 +16,8 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRoutes from './routes/notesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -28,8 +31,14 @@ app.use(logger);
 // Дозволяє запити з будь-яких джерел
 app.use(cors());
 app.use(express.json());
+// Налаштовуємо парсер кук
+// Встановлюємо пакет і підключаємо його як middleware:
+app.use(cookieParser());
+
+
 
 // підключаємо групу маршрутів
+app.use(authRoutes);
 app.use(notesRoutes);
 
 // Middleware 404 (після всіх маршрутів)
@@ -38,9 +47,9 @@ app.use(notFoundHandler);
 // обробка помилок від celebrate (валідація)
 app.use(errors());
 
-
 // Error — якщо під час запиту виникла помилка
 app.use(errorHandler);
+
 
 // підключення до MongoDB
 await connectMongoDB();
@@ -49,3 +58,5 @@ await connectMongoDB();
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
