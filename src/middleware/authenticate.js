@@ -7,13 +7,8 @@ import { User } from '../models/user.js';
 export const authenticate = async (req, res, next) => {
   let accessToken;
 
-  // Спершу перевіряємо заголовок Authorization (для Bearer token)
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    accessToken = authHeader.substring(7); // Видаляємо "Bearer " з початку
-  }
-  // Якщо немає в заголовку, перевіряємо cookies
-  else if (req.cookies.accessToken) {
+  // Перевіряємо токен в cookies
+  if (req.cookies && req.cookies.accessToken) {
     accessToken = req.cookies.accessToken;
   }
 
@@ -57,7 +52,3 @@ export const authenticate = async (req, res, next) => {
   // 8. Передаємо управління далі
   next();
 };
-
-
-
-
