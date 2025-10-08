@@ -21,8 +21,8 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-// Отримуємо порт з змінної оточення або використовуємо 3030 за замовчуванням
-const PORT = process.env.PORT || 3030;
+// Отримуємо порт з змінної оточення або використовуємо 3000 за замовчуванням
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 
