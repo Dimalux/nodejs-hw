@@ -9,11 +9,13 @@ import {
   refreshUserSession,
   registerUser,
   requestResetEmail,
+  resetPassword,
 } from '../controllers/authController.js';
 import {
   loginUserSchema,
   registerUserSchema,
   requestResetEmailSchema,
+  resetPasswordSchema,
 } from '../validations/authValidation.js';
 
 
@@ -43,5 +45,17 @@ router.post(
   celebrate(requestResetEmailSchema),
   requestResetEmail,
 );
+
+
+
+// Реалізуємо ендпоінт POST /auth/reset-password, який буде скидати пароль.
+
+router.post(
+  '/auth/reset-password',
+  celebrate(resetPasswordSchema),
+  resetPassword,
+);
+
+
 
 export default router;

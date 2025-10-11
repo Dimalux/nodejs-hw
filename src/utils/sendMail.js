@@ -1,6 +1,8 @@
 // src/utils/sendMail.js
 
+
 import nodemailer from 'nodemailer';
+import createHttpError from 'create-http-error';
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -12,5 +14,18 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendMail = async (options) => {
-  return await transporter.sendMail(options);
+  try {
+    await transporter.sendMail(options);
+
+    return {
+      message: 'Password reset email sent successfully',
+    };
+  } catch (error) {
+    console.error('Email sending failed:', error);
+
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
 };

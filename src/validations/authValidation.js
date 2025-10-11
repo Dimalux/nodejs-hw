@@ -17,7 +17,6 @@ export const loginUserSchema = {
   }),
 };
 
-
 // Для скидання паролю перевіряємо, що в тілі є коректний email
 
 export const requestResetEmailSchema = {
@@ -26,4 +25,11 @@ export const requestResetEmailSchema = {
   }),
 };
 
+// Схема валідації для скидання паролю
 
+export const resetPasswordSchema = {
+  [Segments.BODY]: Joi.object({
+    password: Joi.string().min(8).required(),
+    token: Joi.string().required(),
+  }),
+};
