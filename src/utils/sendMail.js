@@ -2,7 +2,7 @@
 
 
 import nodemailer from 'nodemailer';
-import createHttpError from 'create-http-error';
+import createHttpError from 'http-errors';
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
