@@ -11,7 +11,10 @@ import { createSession, setSessionCookies } from '../services/auth.js';
 import jwt from 'jsonwebtoken';
 import { sendMail } from '../utils/sendMail.js';
 
-
+// Підключаємо handlebars у контролері
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 
 export const registerUser = async (req, res, next) => {
@@ -80,8 +83,6 @@ export const logoutUser = async (req, res) => {
 };
 
 
-
-
 // Аутентифікація. Оновлення сесії
 
 export const refreshUserSession = async (req, res, next) => {
@@ -121,22 +122,18 @@ export const refreshUserSession = async (req, res, next) => {
 };
 
 
-
-
-
 // Створимо контролер, який оброблятиме запит на зміну пароля:
 
 export const requestResetEmail = async (req, res, next) => {
   const { email } = req.body;
 
  const user = await User.findOne({ email });
-  // Якщо користувача нема — навмисно повертаємо ту саму "успішну"
-  // відповідь без відправлення листа (anti user enumeration).
-  if (!user) {
-    return res.status(200).json({
-      message: 'If this email exists, a reset link has been sent',
-    });
+
+   // Якщо користувача не знайдено, повертаємо помилку 404
+ if (!user) {
+    return next(createHttpError(404, 'User not found'));
   }
+
 
 	// Користувач є — генеруємо короткоживучий JWT і відправляємо лист
   const resetToken = jwt.sign(
@@ -145,12 +142,34 @@ export const requestResetEmail = async (req, res, next) => {
     { expiresIn: '15m' },
   );
 
+
+
+  // 1. Формуємо шлях до шаблона
+  const templatePath = path.resolve('src/templates/reset-password-email.html');
+  // 2. Читаємо шаблон
+  const templateSource = await fs.readFile(templatePath, 'utf-8');
+  // 3. Готуємо шаблон до заповнення
+  const template = handlebars.compile(templateSource);
+  // 4. Формуємо із шаблона HTML документ з динамічними даними
+  const html = template({
+    name: user.username,
+    link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${resetToken}`,
+  });
+
+
+
+
+
+
   try {
     await sendMail({
       from: process.env.SMTP_FROM,
       to: email,
       subject: 'Reset your password',
-      html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`,
+
+      // 5. Передаємо HTML у функцію надписання пошти
+      html,
+
     });
   } catch {
     next(createHttpError(500, 'Failed to send the email, please try again later.'));
