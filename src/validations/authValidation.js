@@ -16,3 +16,14 @@ export const loginUserSchema = {
     password: Joi.string().required(),
   }),
 };
+
+
+// Для скидання паролю перевіряємо, що в тілі є коректний email
+
+export const requestResetEmailSchema = {
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().email().required(),
+  }),
+};
+
+
