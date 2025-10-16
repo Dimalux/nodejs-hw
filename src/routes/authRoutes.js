@@ -8,10 +8,14 @@ import {
   logoutUser,
   refreshUserSession,
   registerUser,
+  requestResetEmail,
+  resetPassword,
 } from '../controllers/authController.js';
 import {
   loginUserSchema,
   registerUserSchema,
+  requestResetEmailSchema,
+  resetPasswordSchema,
 } from '../validations/authValidation.js';
 
 
@@ -33,5 +37,25 @@ router.post('/auth/logout', logoutUser);
 
  // POST /auth/refresh - cтворення нової сесії
 router.post('/auth/refresh', refreshUserSession);
+
+
+// Реалізуємо ендпоінт POST /auth/request-reset-email, який надсилатиме лист із посиланням для скидання пароля.
+router.post(
+  '/auth/request-reset-email',
+  celebrate(requestResetEmailSchema),
+  requestResetEmail,
+);
+
+
+
+// Реалізуємо ендпоінт POST /auth/reset-password, який буде скидати пароль.
+
+router.post(
+  '/auth/reset-password',
+  celebrate(resetPasswordSchema),
+  resetPassword,
+);
+
+
 
 export default router;
